@@ -1,4 +1,4 @@
-import { Optional } from './option';
+import Optional from './optional';
 
 let doc: Optional<String> = Optional.fromUnsafe('hello');
 

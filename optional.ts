@@ -1,6 +1,6 @@
 type Func1<T, R> = (x: T) => R;
 
-export abstract class Optional<T> {
+abstract class Optional<T> {
   abstract isSome(): Boolean;
 
   abstract isNone(): Boolean;
@@ -30,6 +30,8 @@ export abstract class Optional<T> {
     return Optional.none;
   }
 }
+
+export default Optional;
 
 class Some<T> extends Optional<T> {
   constructor (private value) {

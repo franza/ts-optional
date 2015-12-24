@@ -1,11 +1,11 @@
 {
   "compilerOptions": {
-      "target": "es5",
+      "target": "es6",
       "module": "commonjs",
       "declaration": false,
       "noImplicitAny": false,
       "removeComments": true,
       "noLib": false
   },
-  "files": ["option.ts", "test.ts"]
+  "files": ["optional.ts", "test.ts"]
 }
