@@ -1,3 +1,5 @@
+See `test.ts`
+
 ```typescript
 import { Optional } from './option';
 
