@@ -1,17 +1,26 @@
 type Func1<T, R> = (x: T) => R;
 
 abstract class Optional<T> {
-  abstract isSome(): Boolean;
+  abstract isSome(): boolean;
 
-  abstract isNone(): Boolean;
+  isNone(): boolean {
+    return !this.isSome();
+  }
 
   abstract map<K>(fn: Func1<T, K>): Optional<K>;
 
   abstract flatMap<K>(fn: Func1<T, Optional<K>>): Optional<K>;
 
-  abstract get<T>(): T;
+  abstract and(another: T): Optional<T>;
 
-  abstract or(smth: T): T;
+  // Don't override
+  andThen<K>(fn: Func1<T, Optional<K>>): Optional<K> {
+    return this.flatMap(fn);
+  }
+
+  abstract unwrap<T>(): T;
+
+  abstract unwrap_or(smth: T): T;
 
   static fromUnsafe<T>(val: T): Optional<T> {
     return val != null ? Optional.Some(val) : Optional.None;
@@ -29,6 +38,15 @@ abstract class Optional<T> {
     }
     return Optional.none;
   }
+
+  static all<T>(arr: Array<Optional<T>>): Optional<T> {
+    return arr.reduce((memo, item) => {
+      if (memo.isSome() && item.isSome()) {
+        memo.unwrap().push(item.unwrap());
+      }
+      return memo;
+    }, Optional.Some([]));
+  }
 }
 
 export default Optional;
@@ -38,21 +56,20 @@ class Some<T> extends Optional<T> {
     super()
   }
 
-  get fucksgiven() { return 0; }
-
   isSome() { return true; }
-
-  isNone() { return false; }
 
   map(fn) { return Optional.fromUnsafe(fn(this.value)); }
 
   flatMap(fn) { return fn(this.value); }
 
-  get() { return this.value }
+  and(another) {
+    return another;
+  }
 
-  toString() { return `Some(${this.value})`; }
+  unwrap() { return this.value }
 
-  or(_) { return this.value; }
+  unwrap_or(_) { return this.value; }
+
 }
 
 class None extends Optional<Object> {
@@ -62,15 +79,15 @@ class None extends Optional<Object> {
 
   isSome() { return false; }
 
-  isNone() { return true; }
-
   map(fn: Func1<Object, Object>): Optional<Object> { return Optional.None; }
 
   flatMap(fn: Func1<Object, Optional<Object>>): Optional<Object> { return Optional.None; }
 
-  get() { throw new Error('Cannot get value of None'); }
+  and(another) {
+    return this;
+  }
 
-  toString() { return 'None'; }
+  unwrap() { throw new Error('Cannot get value of None'); }
 
-  or(another) { return another; }
+  unwrap_or(another) { return another; }
 }
